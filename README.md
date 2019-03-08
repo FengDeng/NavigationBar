@@ -1,5 +1,7 @@
 # NavigationBar
 
+![image](demo.gif)
+
 一行代码从UINavigationBar切换到NavigationBar
 
 ```
