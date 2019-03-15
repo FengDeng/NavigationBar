@@ -35,6 +35,12 @@ public class NavigationBar : UIView{
             if let text = title{
                 self._titleView.attributedText = NSAttributedString.init(string: text, attributes: titleAttribute)
             }
+            if let color = titleAttribute[.foregroundColor] as? UIColor{
+                self._titleView.textColor = color
+            }
+            if let font = titleAttribute[.font] as? UIFont{
+                self._titleView.font = font
+            }
         }
     }
     
@@ -209,18 +215,6 @@ public class NavigationBar : UIView{
     var rightViewOb : NSKeyValueObservation?
     var rightViewsOb : NSKeyValueObservation?
     
-    //禁止设置自己的alpha
-    public override var alpha: CGFloat{
-        set{
-            
-        }
-        get{
-            return 1
-        }
-    }
-    
-    
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         let appearance = NavigationBarAppearance.appearance
@@ -254,6 +248,12 @@ public class NavigationBar : UIView{
         container.leftAnchor.constraint(equalTo: super.leftAnchor).isActive = true
         container.rightAnchor.constraint(equalTo: super.rightAnchor).isActive = true
         
+        if let color = titleAttribute[.foregroundColor] as? UIColor{
+            self._titleView.textColor = color
+        }
+        if let font = titleAttribute[.font] as? UIFont{
+            self._titleView.font = font
+        }
         self.titleView = _titleView
         _titleView.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(_titleView)
@@ -266,6 +266,7 @@ public class NavigationBar : UIView{
     }
     deinit {
         print("deinit navigationBar")
+        
     }
     
     public override func addSubview(_ view: UIView) {

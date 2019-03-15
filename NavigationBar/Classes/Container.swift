@@ -12,19 +12,34 @@ import UIKit
 class Container : UIView{
     let navBarView : NavigationBar
     let originView : UIView
-    init(bar:NavigationBar,originView:UIView) {
+    init(bar:NavigationBar,originView:UIView,frame:CGRect) {
         self.navBarView = bar
         self.originView = originView
-        super.init(frame: CGRect.zero)
+        super.init(frame: frame)
         super.addSubview(originView)
         super.addSubview(navBarView)
         navBarView.frame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIApplication.shared.statusBarFrame.height + 44)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.originView.frame = self.bounds
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override var layer: CALayer{
+        return self.originView.layer
+    }
+    
+    ///在最上层添加视图，会遮住bar
+    func nb_addSubview(_ view: UIView) {
+        super.addSubview(view)
+    }
+    
+    ///不会遮住bar
     override func addSubview(_ view: UIView) {
         self.originView.addSubview(view)
         if let scroll = view as? UIScrollView,let first = self.originView.subviews.first,first == scroll{

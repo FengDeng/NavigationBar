@@ -11,7 +11,6 @@ import UIKit
 
 private var NavigationBarKey: Void?
 extension UIViewController{
-    
     fileprivate var bk_NavigationBar : NavigationBar{
         set{
             objc_setAssociatedObject(self, &NavigationBarKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)}
@@ -25,27 +24,35 @@ extension UIViewController{
             }
         }
     }
-    
+    func initNavigationItem(){
+        self.bk_NavigationBar.title = self.navigationItem.title
+        self.bk_NavigationBar.titleView = self.navigationItem.titleView
+        self.bk_NavigationBar.leftView = self.createOptionView(item: self.navigationItem.leftBarButtonItem)
+        self.bk_NavigationBar.leftViews = self.navigationItem.leftBarButtonItems?.map({ (item) -> UIView in
+            return self.createView(item: item)
+        })
+        self.bk_NavigationBar.rightView = self.createOptionView(item: self.navigationItem.rightBarButtonItem)
+        self.bk_NavigationBar.rightViews = self.navigationItem.rightBarButtonItems?.map({ (item) -> UIView in
+            return self.createView(item: item)
+        })
+    }
     func observeNavigationItem(){
         
-        self.bk_NavigationBar.title = self.navigationItem.title
         self.bk_NavigationBar.titleOb = self.navigationItem.observe(\UINavigationItem.title, changeHandler: {[weak self] (item, change) in
             self?.bk_NavigationBar.title = item.title
         })
         
-        self.bk_NavigationBar.titleView = self.navigationItem.titleView
+        
         self.bk_NavigationBar.titleViewOb = self.navigationItem.observe(\.titleView, changeHandler: {[weak self] (item, change) in
             self?.bk_NavigationBar.titleView = item.titleView
         })
         
-        self.bk_NavigationBar.leftView = self.createOptionView(item: self.navigationItem.leftBarButtonItem)
+        
         self.bk_NavigationBar.leftViewOb = self.navigationItem.observe(\.leftBarButtonItem, changeHandler: {[weak self] (item, change) in
             self?.bk_NavigationBar.leftView = self?.createOptionView(item: item.leftBarButtonItem)
         })
         
-        self.bk_NavigationBar.leftViews = self.navigationItem.leftBarButtonItems?.map({ (item) -> UIView in
-            return self.createView(item: item)
-        })
+        
         self.bk_NavigationBar.leftViewsOb = self.navigationItem.observe(\.leftBarButtonItems, changeHandler: {[weak self] (item, change) in
             guard let `self` = self else{return}
             let views = item.leftBarButtonItems?.map({ (item) -> UIView in
@@ -54,14 +61,12 @@ extension UIViewController{
             self.bk_NavigationBar.leftViews = views
         })
         
-        self.bk_NavigationBar.rightView = self.createOptionView(item: self.navigationItem.rightBarButtonItem)
+        
         self.bk_NavigationBar.rightViewOb = self.navigationItem.observe(\.rightBarButtonItem, changeHandler: {[weak self] (item, change) in
             self?.bk_NavigationBar.rightView = self?.createOptionView(item: item.rightBarButtonItem)
         })
         
-        self.bk_NavigationBar.rightViews = self.navigationItem.rightBarButtonItems?.map({ (item) -> UIView in
-            return self.createView(item: item)
-        })
+        
         self.bk_NavigationBar.rightViewsOb = self.navigationItem.observe(\.rightBarButtonItems, changeHandler: {[weak self] (item, change) in
             guard let `self` = self else{return}
             let views = item.rightBarButtonItems?.map({ (item) -> UIView in
@@ -69,7 +74,22 @@ extension UIViewController{
             })
             self.bk_NavigationBar.rightViews = views
         })
-        
+ 
+    }
+    
+    func unObserveNavigationItem(){
+        self.bk_NavigationBar.titleOb?.invalidate()
+        self.bk_NavigationBar.titleOb = nil
+        self.bk_NavigationBar.titleViewOb?.invalidate()
+        self.bk_NavigationBar.titleViewOb = nil
+        self.bk_NavigationBar.leftViewOb?.invalidate()
+        self.bk_NavigationBar.leftViewOb = nil
+        self.bk_NavigationBar.leftViewsOb?.invalidate()
+        self.bk_NavigationBar.leftViewsOb = nil
+        self.bk_NavigationBar.rightViewOb?.invalidate()
+        self.bk_NavigationBar.rightViewOb = nil
+        self.bk_NavigationBar.rightViewsOb?.invalidate()
+        self.bk_NavigationBar.rightViewsOb = nil
     }
     
     func createView(item:UIBarButtonItem)->UIView{
@@ -95,6 +115,15 @@ extension UIViewController{
 
 
 public extension NBWrapper where Base : UIViewController{
+    public var originView : UIView{
+        if let v = self.base.view as? Container{
+            return v.originView
+        }
+        return self.base.view
+    }
+    public var containerView : UIView{
+        return self.base.view
+    }
     public var navigationBar : NavigationBar{
         return base.bk_NavigationBar
     }
@@ -135,17 +164,27 @@ extension UIViewController{
     }
     private static let runOnce : Void = {
         exchangeImplementations(cls: UIViewController.self, originSelector: #selector(UIViewController.loadView), swizzledSelector: #selector(UIViewController.swizzled_loadView))
+        exchangeImplementations(cls: UIViewController.self, originSelector: #selector(UIViewController.viewWillAppear(_:)), swizzledSelector: #selector(UIViewController.swizzled_viewWillAppear(_:)))
+        exchangeImplementations(cls: UIViewController.self, originSelector: #selector(UIViewController.viewWillDisappear(_:)), swizzledSelector: #selector(UIViewController.swizzled_viewWillDisappear(_:)))
     }()
     @objc func swizzled_loadView(){
         self.swizzled_loadView()
         if let nav = self.navigationController,nav._navigationBarEnable{
             let originView = self.view ?? UIView()
-            let frame = self.view.frame
-            let container = Container.init(bar: self.bk_NavigationBar, originView: originView)
-            self.observeNavigationItem()
+            let bound = self.view.bounds
+            let container = Container.init(bar: self.bk_NavigationBar, originView: originView,frame:bound)
+            self.initNavigationItem()
             self.automaticallyAdjustsScrollViewInsets = false
             self.view = container
-            self.view.frame = frame
         }
+    }
+    
+    @objc func swizzled_viewWillAppear(_ animated:Bool){
+        self.swizzled_viewWillAppear(animated)
+        self.observeNavigationItem()
+    }
+    @objc func swizzled_viewWillDisappear(_ animated:Bool){
+        self.swizzled_viewWillDisappear(animated)
+        self.unObserveNavigationItem()
     }
 }
