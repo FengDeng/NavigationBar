@@ -24,20 +24,34 @@ extension UIViewController{
             }
         }
     }
+    
+    ///本来一遍监听就ok了，但是在5s手机上，observe不释放，导致vc释放的时候k崩溃
+    ///这里处理方法就是willAppear注册，在willDisappear释放
     func initNavigationItem(){
-        self.bk_NavigationBar.title = self.navigationItem.title
-        self.bk_NavigationBar.titleView = self.navigationItem.titleView
-        self.bk_NavigationBar.leftView = self.createOptionView(item: self.navigationItem.leftBarButtonItem)
-        self.bk_NavigationBar.leftViews = self.navigationItem.leftBarButtonItems?.map({ (item) -> UIView in
-            return self.createView(item: item)
-        })
-        self.bk_NavigationBar.rightView = self.createOptionView(item: self.navigationItem.rightBarButtonItem)
-        self.bk_NavigationBar.rightViews = self.navigationItem.rightBarButtonItems?.map({ (item) -> UIView in
-            return self.createView(item: item)
-        })
+        if self.bk_NavigationBar.title == nil {
+            self.bk_NavigationBar.title = self.navigationItem.title
+        }
+        if self.bk_NavigationBar.titleView == nil{
+            self.bk_NavigationBar.titleView = self.navigationItem.titleView
+        }
+        if self.bk_NavigationBar.leftView == nil{
+            self.bk_NavigationBar.leftView = self.createOptionView(item: self.navigationItem.leftBarButtonItem)
+        }
+        if self.bk_NavigationBar.leftViews == nil{
+            self.bk_NavigationBar.leftViews = self.navigationItem.leftBarButtonItems?.map({ (item) -> UIView in
+                return self.createView(item: item)
+            })
+        }
+        if self.bk_NavigationBar.rightView == nil{
+            self.bk_NavigationBar.rightView = self.createOptionView(item: self.navigationItem.rightBarButtonItem)
+        }
+        if self.bk_NavigationBar.rightViews == nil{
+            self.bk_NavigationBar.rightViews = self.navigationItem.rightBarButtonItems?.map({ (item) -> UIView in
+                return self.createView(item: item)
+            })
+        }
     }
     func observeNavigationItem(){
-        
         self.bk_NavigationBar.titleOb = self.navigationItem.observe(\UINavigationItem.title, changeHandler: {[weak self] (item, change) in
             self?.bk_NavigationBar.title = item.title
         })
@@ -96,9 +110,18 @@ extension UIViewController{
         if let view = item.customView{
             return view
         }
+        print(item.style.rawValue)
+        if let systemItem = item.value(forKey: "systemItem") as? Int,systemItem == 6 || systemItem == 5{
+            let v = UIView()
+            v.backgroundColor = UIColor.clear
+            v.widthAnchor.constraint(equalToConstant: item.width).isActive = true
+            v.heightAnchor.constraint(equalToConstant: 0.1)
+            return v
+        }
+        
         let b = UIButton.init(type: UIButton.ButtonType.custom)
         if let title = item.title{
-            b.setAttributedTitle(NSAttributedString.init(string: title, attributes: self.bk_NavigationBar.viewAttribute), for: UIControl.State.normal)
+            b.setAttributedTitle(NSAttributedString.init(string: title, attributes: self.bk_NavigationBar.itemAttribute), for: UIControl.State.normal)
         }
         b.setTitle(item.title, for: UIControl.State.normal)
         b.setImage(item.image, for: UIControl.State.normal)
@@ -115,19 +138,19 @@ extension UIViewController{
 
 
 public extension NBWrapper where Base : UIViewController{
-    public var originView : UIView{
+    var originView : UIView{
         if let v = self.base.view as? Container{
             return v.originView
         }
         return self.base.view
     }
-    public var containerView : UIView{
+    var containerView : UIView{
         return self.base.view
     }
-    public var navigationBar : NavigationBar{
+    var navigationBar : NavigationBar{
         return base.bk_NavigationBar
     }
-    public var navigationBarHeight : CGFloat{
+    var navigationBarHeight : CGFloat{
         return UIApplication.shared.statusBarFrame.height + 44
     }
 }
@@ -145,7 +168,7 @@ extension UINavigationController{
 
 
 public extension NBWrapper where Base : UINavigationController{
-    public var navigationBarEnable : Bool{
+    var navigationBarEnable : Bool{
         set{
             self.base.isNavigationBarHidden = newValue
             self.base._navigationBarEnable = newValue
@@ -166,6 +189,7 @@ extension UIViewController{
         exchangeImplementations(cls: UIViewController.self, originSelector: #selector(UIViewController.loadView), swizzledSelector: #selector(UIViewController.swizzled_loadView))
         exchangeImplementations(cls: UIViewController.self, originSelector: #selector(UIViewController.viewWillAppear(_:)), swizzledSelector: #selector(UIViewController.swizzled_viewWillAppear(_:)))
         exchangeImplementations(cls: UIViewController.self, originSelector: #selector(UIViewController.viewWillDisappear(_:)), swizzledSelector: #selector(UIViewController.swizzled_viewWillDisappear(_:)))
+        exchangeImplementations(cls: UIViewController.self, originSelector: #selector(UIViewController.viewDidLoad), swizzledSelector: #selector(UIViewController.swizzled_viewDidLoad))
     }()
     @objc func swizzled_loadView(){
         self.swizzled_loadView()
@@ -173,12 +197,15 @@ extension UIViewController{
             let originView = self.view ?? UIView()
             let bound = self.view.bounds
             let container = Container.init(bar: self.bk_NavigationBar, originView: originView,frame:bound)
-            self.initNavigationItem()
             self.automaticallyAdjustsScrollViewInsets = false
             self.view = container
         }
     }
-    
+    @objc func swizzled_viewDidLoad(){
+        self.initNavigationItem()
+        self.observeNavigationItem()
+        self.swizzled_viewDidLoad()
+    }
     @objc func swizzled_viewWillAppear(_ animated:Bool){
         self.swizzled_viewWillAppear(animated)
         self.observeNavigationItem()

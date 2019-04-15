@@ -9,6 +9,15 @@
 import Foundation
 import UIKit
 
+extension UIStackView{
+    func removeAllArrangedView(){
+        for view in self.arrangedSubviews{
+            self.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+    }
+}
+
 public class NavigationBarAppearance{
     
     public static let appearance = NavigationBarAppearance()
@@ -16,7 +25,7 @@ public class NavigationBarAppearance{
     
     public var backgroundColor = UIColor.white
     public var titleAttribute : [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 20),NSAttributedString.Key.foregroundColor:UIColor.black]
-    public var viewAttribute : [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 14),NSAttributedString.Key.foregroundColor:UIColor.black]
+    public var itemAttribute : [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 14),NSAttributedString.Key.foregroundColor:UIColor.black]
     public var leftViewSpace : CGFloat = 10
     public var leftViewsSpace : CGFloat = 5
     public var rightViewSpace : CGFloat = 10
@@ -78,88 +87,67 @@ public class NavigationBar : UIView{
         }
     }
     
+    public lazy var leftItemRightAnchor : NSLayoutXAxisAnchor = {
+        return self.leftStackView.rightAnchor
+    }()
+    private lazy var leftStackView : UIStackView = {
+        let s = UIStackView()
+        s.axis = NSLayoutConstraint.Axis.horizontal
+        s.alignment = UIStackView.Alignment.center
+        s.spacing = self.leftViewsSpace
+        s.distribution = .equalSpacing
+        s.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: NSLayoutConstraint.Axis.horizontal)
+        return s
+    }()
     public var leftView : UIView?{
         didSet{
-            if leftView != nil{
-                self.leftViews = nil
-            }
-            
-            oldValue?.removeFromSuperview()
+            self.leftStackView.removeAllArrangedView()
             guard let leftView = leftView else{return}
             leftView.updateFrameToAutoLayout()
-            self.container.addSubview(leftView)
-            leftView.leftAnchor.constraint(equalTo: self.container.leftAnchor, constant: leftViewSpace).isActive = true
-            leftView.centerYAnchor.constraint(equalTo: self.container.centerYAnchor).isActive = true
-            
+            self.leftStackView.addArrangedSubview(leftView)
         }
     }
-    
+
     public var leftViews : [UIView]?{
         didSet{
-            if leftViews != nil{
-                self.leftView = nil
+            self.leftStackView.removeAllArrangedView()
+            guard let leftViews = leftViews else{return}
+            for view in leftViews{
+                view.updateFrameToAutoLayout()
+                self.leftStackView.addArrangedSubview(view)
             }
-            
-            if let oldValue = oldValue{
-                for v in oldValue{
-                    v.removeFromSuperview()
-                }
-            }
-            guard let leftViews = leftViews else {return}
-            var lastV : UIView? = nil
-            for v in leftViews{
-                self.container.addSubview(v)
-                v.updateFrameToAutoLayout()
-                if let lastV = lastV{
-                    v.leftAnchor.constraint(equalTo: lastV.leftAnchor, constant: leftViewsSpace).isActive = true
-                }else{
-                    v.leftAnchor.constraint(equalTo: self.container.leftAnchor, constant: leftViewSpace).isActive = true
-                }
-                v.centerYAnchor.constraint(equalTo: self.container.centerYAnchor).isActive = true
-                lastV = v
-            }
-            
         }
     }
     
+    public lazy var rightItemLeftAnchor : NSLayoutXAxisAnchor = {
+        return self.rightStackView.leftAnchor
+    }()
+    private lazy var rightStackView : UIStackView = {
+        let s = UIStackView()
+        s.axis = NSLayoutConstraint.Axis.horizontal
+        s.alignment = UIStackView.Alignment.center
+        s.spacing = self.rightViewsSpace
+        s.distribution = .equalSpacing
+        s.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: NSLayoutConstraint.Axis.horizontal)
+        return s
+    }()
     public var rightView : UIView?{
         didSet{
-            if rightViews != nil{
-                rightViews = nil
-            }
-            oldValue?.removeFromSuperview()
+            self.rightStackView.removeAllArrangedView()
             guard let rightView = rightView else{return}
             rightView.updateFrameToAutoLayout()
-            self.container.addSubview(rightView)
-            rightView.rightAnchor.constraint(equalTo: self.container.rightAnchor, constant: -leftViewSpace).isActive = true
-            rightView.centerYAnchor.constraint(equalTo: self.container.centerYAnchor).isActive = true
+            self.rightStackView.addArrangedSubview(rightView)
         }
     }
     
     public var rightViews : [UIView]?{
         didSet{
-            if self.rightView != nil{
-                self.rightView = nil
+            self.rightStackView.removeAllArrangedView()
+            guard let rightViews = rightViews else{return}
+            for view in rightViews{
+                view.updateFrameToAutoLayout()
+                self.rightStackView.addArrangedSubview(view)
             }
-            if let oldValue = oldValue{
-                for v in oldValue{
-                    v.removeFromSuperview()
-                }
-            }
-            guard let rightViews = rightViews else {return}
-            var lastV : UIView? = nil
-            for v in rightViews{
-                self.container.addSubview(v)
-                v.updateFrameToAutoLayout()
-                if let lastV = lastV{
-                    v.rightAnchor.constraint(equalTo: lastV.leftAnchor, constant: -leftViewsSpace).isActive = true
-                }else{
-                    v.rightAnchor.constraint(equalTo: self.container.rightAnchor, constant: -leftViewSpace).isActive = true
-                }
-                v.centerYAnchor.constraint(equalTo: self.container.centerYAnchor).isActive = true
-                lastV = v
-            }
-            
         }
     }
     
@@ -193,12 +181,28 @@ public class NavigationBar : UIView{
         }
     }
     
-    public var viewAttribute : [NSAttributedString.Key : Any] = NavigationBarAppearance.appearance.viewAttribute
+    public var itemAttribute : [NSAttributedString.Key : Any] = NavigationBarAppearance.appearance.itemAttribute
     
-    public var leftViewSpace : CGFloat = NavigationBarAppearance.appearance.leftViewSpace
-    public var leftViewsSpace : CGFloat = NavigationBarAppearance.appearance.leftViewsSpace
-    public var rightViewSpace : CGFloat = NavigationBarAppearance.appearance.rightViewSpace
-    public var rightViewsSpace : CGFloat = NavigationBarAppearance.appearance.rightViewsSpace
+    public var leftViewSpace : CGFloat = NavigationBarAppearance.appearance.leftViewSpace{
+        didSet{
+            leftStackView.leftAnchor.constraint(equalTo: self.container.leftAnchor, constant: leftViewSpace).isActive = true
+        }
+    }
+    public var leftViewsSpace : CGFloat = NavigationBarAppearance.appearance.leftViewsSpace{
+        didSet{
+            self.leftStackView.spacing = leftViewsSpace
+        }
+    }
+    public var rightViewSpace : CGFloat = NavigationBarAppearance.appearance.rightViewSpace{
+        didSet{
+            rightStackView.rightAnchor.constraint(equalTo: self.container.rightAnchor, constant: -rightViewSpace).isActive = true
+        }
+    }
+    public var rightViewsSpace : CGFloat = NavigationBarAppearance.appearance.rightViewsSpace{
+        didSet{
+            self.rightStackView.spacing = rightViewsSpace
+        }
+    }
     
     
     //不包含statusbar 外部addview都在这个view上面
@@ -259,13 +263,29 @@ public class NavigationBar : UIView{
         container.addSubview(_titleView)
         _titleView.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
         _titleView.centerXAnchor.constraint(equalTo: container.centerXAnchor).isActive = true
+        
+        leftStackView.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(leftStackView)
+        leftStackView.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
+        leftStackView.topAnchor.constraint(equalTo: self.container.topAnchor)
+        leftStackView.bottomAnchor.constraint(equalTo: self.container.bottomAnchor)
+        leftStackView.leftAnchor.constraint(equalTo: self.container.leftAnchor, constant: leftViewSpace).isActive = true
+        //leftStackView.widthAnchor.constraint(equalToConstant: 200)
+        
+        rightStackView.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(rightStackView)
+        rightStackView.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
+        rightStackView.topAnchor.constraint(equalTo: self.container.topAnchor)
+        rightStackView.bottomAnchor.constraint(equalTo: self.container.bottomAnchor)
+        rightStackView.rightAnchor.constraint(equalTo: self.container.rightAnchor, constant: -rightViewSpace).isActive = true
+        //rightStackView.widthAnchor.constraint(equalToConstant: 200)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     deinit {
-        print("deinit navigationBar")
+//        print("deinit navigationBar")
         
     }
     
