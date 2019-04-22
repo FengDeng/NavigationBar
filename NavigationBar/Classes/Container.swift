@@ -11,7 +11,7 @@ import UIKit
 
 public class Container : UIView{
     let navBarView : NavigationBar
-    let originView : UIView
+    weak var originView : UIView?
     init(bar:NavigationBar,originView:UIView,frame:CGRect) {
         self.navBarView = bar
         self.originView = originView
@@ -23,7 +23,7 @@ public class Container : UIView{
     
     override public func layoutSubviews() {
         super.layoutSubviews()
-        self.originView.frame = self.bounds
+        self.originView?.frame = self.bounds
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -31,7 +31,7 @@ public class Container : UIView{
     }
     
     override public var layer: CALayer{
-        return self.originView.layer
+        return self.originView?.layer ?? CALayer()
     }
     
     ///在最上层添加视图，会遮住bar
@@ -41,8 +41,8 @@ public class Container : UIView{
     
     ///不会遮住bar
     override public func addSubview(_ view: UIView) {
-        self.originView.addSubview(view)
-        if let scroll = view as? UIScrollView,let first = self.originView.subviews.first,first == scroll{
+        self.originView?.addSubview(view)
+        if let scroll = view as? UIScrollView,let first = self.originView?.subviews.first,first == scroll{
             if #available(iOS 11.0, *) {
                 scroll.contentInsetAdjustmentBehavior = .never
             }

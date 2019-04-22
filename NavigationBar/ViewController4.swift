@@ -28,7 +28,7 @@ class ViewController4: UIViewController {
         tableView.frame = self.view.bounds
         
         self.nb.navigationBar.titleAttribute[.foregroundColor] = UIColor.red
-        self.nb.navigationBar.viewAttribute[.foregroundColor] = UIColor.red
+        self.nb.navigationBar.itemAttribute[.foregroundColor] = UIColor.red
         
         self.title = "滚动透明度"
         self.nb.navigationBar.backgroundColor = UIColor.black

@@ -138,7 +138,7 @@ extension UIViewController{
 
 
 public extension NBWrapper where Base : UIViewController{
-    var originView : UIView{
+    var originView : UIView?{
         if let v = self.base.view as? Container{
             return v.originView
         }
