@@ -32,6 +32,7 @@ public class NavigationBarAppearance{
     public var rightViewsSpace : CGFloat = 5
     
     public var backgroundImage : UIImage?
+    public var shadowColor : UIColor?
     public var shadowImage : UIImage?
     public var shadowHeight : CGFloat = 1
 }
@@ -154,6 +155,11 @@ public class NavigationBar : UIView{
     public var backgroundImage : UIImage?{
         didSet{
             self.backgroundImageView.image = backgroundImage
+        }
+    }
+    public var shadowColor : UIColor?{
+        didSet{
+            self.shadowImageView.backgroundColor = shadowColor
         }
     }
     public var shadowImage : UIImage?{

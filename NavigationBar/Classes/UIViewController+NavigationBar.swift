@@ -63,7 +63,11 @@ extension UIViewController{
         
         
         self.bk_NavigationBar.leftViewOb = self.navigationItem.observe(\.leftBarButtonItem, changeHandler: {[weak self] (item, change) in
-            self?.bk_NavigationBar.leftView = self?.createOptionView(item: item.leftBarButtonItem)
+            guard let `self` = self else{return}
+            let views = item.leftBarButtonItems?.map({ (item) -> UIView in
+                return self.createView(item: item)
+            })
+            self.bk_NavigationBar.leftViews = views
         })
         
         
@@ -77,7 +81,11 @@ extension UIViewController{
         
         
         self.bk_NavigationBar.rightViewOb = self.navigationItem.observe(\.rightBarButtonItem, changeHandler: {[weak self] (item, change) in
-            self?.bk_NavigationBar.rightView = self?.createOptionView(item: item.rightBarButtonItem)
+            guard let `self` = self else{return}
+            let views = item.rightBarButtonItems?.map({ (item) -> UIView in
+                return self.createView(item: item)
+            })
+            self.bk_NavigationBar.rightViews = views
         })
         
         
