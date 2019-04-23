@@ -243,6 +243,7 @@ public class NavigationBar : UIView{
         shadowImageView.layer.masksToBounds = true
         shadowImageView.contentMode = .scaleAspectFill
         shadowImageView.image = appearance.shadowImage
+        shadowImageView.backgroundColor = appearance.shadowColor
         super.addSubview(shadowImageView)
         shadowImageView.translatesAutoresizingMaskIntoConstraints = false
         shadowImageView.heightAnchor.constraint(equalToConstant: self.shadowHeight).isActive = true
