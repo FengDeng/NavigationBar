@@ -181,9 +181,27 @@ public class NavigationBar : UIView{
         }
     }
     
+    ///标题是否需要跟随透明
+    public var isTitleViewTransparency = false
+    ///左边是否跟随透明
+    public var isLeftItemsTransparency = false
+    ///右边是否跟随透明
+    public var isRightItemsTransparency = false
+    
     public var transparency : CGFloat = 1{
         didSet{
             self.backgroundImageView.alpha = transparency
+            self.shadowImageView.alpha = transparency
+            
+            if isTitleViewTransparency{
+                self.titleView?.alpha = transparency
+            }
+            if isLeftItemsTransparency{
+                self.leftStackView.alpha = transparency
+            }
+            if isRightItemsTransparency{
+                self.rightStackView.alpha = transparency
+            }
         }
     }
     
