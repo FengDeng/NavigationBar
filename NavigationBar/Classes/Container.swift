@@ -42,6 +42,7 @@ public class Container : UIView{
     ///不会遮住bar
     override public func addSubview(_ view: UIView) {
         self.originView?.addSubview(view)
+        /*
         if let scroll = view as? UIScrollView,let first = self.originView?.subviews.first,first == scroll{
             if #available(iOS 11.0, *) {
                 scroll.contentInsetAdjustmentBehavior = .never
@@ -54,6 +55,6 @@ public class Container : UIView{
             var point = scroll.contentOffset
             point.y = point.y - (UIApplication.shared.statusBarFrame.height + 44)
             scroll.contentOffset = point
-        }
+        }*/
     }
 }
