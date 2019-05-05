@@ -210,16 +210,23 @@ extension UIViewController{
         }
     }
     @objc func swizzled_viewDidLoad(){
-        self.initNavigationItem()
-        self.observeNavigationItem()
+        if let nav = self.navigationController,nav._navigationBarEnable{
+            self.initNavigationItem()
+            self.observeNavigationItem()
+        }
+        
         self.swizzled_viewDidLoad()
     }
     @objc func swizzled_viewWillAppear(_ animated:Bool){
         self.swizzled_viewWillAppear(animated)
-        self.observeNavigationItem()
+        if let nav = self.navigationController,nav._navigationBarEnable{
+            self.observeNavigationItem()
+        }
     }
     @objc func swizzled_viewWillDisappear(_ animated:Bool){
         self.swizzled_viewWillDisappear(animated)
-        self.unObserveNavigationItem()
+        if let nav = self.navigationController,nav._navigationBarEnable{
+            self.unObserveNavigationItem()
+        }
     }
 }
