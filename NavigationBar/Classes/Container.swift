@@ -9,21 +9,37 @@
 import Foundation
 import UIKit
 
+var safeTopHeight : CGFloat{
+    if UIDevice.current.userInterfaceIdiom != .phone{
+        return UIApplication.shared.statusBarFrame.height
+    }
+    if #available(iOS 11.0, *) {
+        let bottom = UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
+        return bottom > 0 ? 44 : UIApplication.shared.statusBarFrame.height
+    } else {
+        return UIApplication.shared.statusBarFrame.height
+    }
+}
+
 public class Container : UIView{
     let navBarView : NavigationBar
     weak var originView : UIView?
-    init(bar:NavigationBar,originView:UIView,frame:CGRect) {
+    weak var viewController : UIViewController?
+    var scrollViews = [UIScrollView]()
+    init(bar:NavigationBar,originView:UIView,frame:CGRect,viewController:UIViewController) {
+        self.viewController = viewController
         self.navBarView = bar
         self.originView = originView
         super.init(frame: frame)
         super.addSubview(originView)
         super.addSubview(navBarView)
-        navBarView.frame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIApplication.shared.statusBarFrame.height + 44)
+        navBarView.frame = CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: safeTopHeight + 44)
     }
     
     override public func layoutSubviews() {
         super.layoutSubviews()
         self.originView?.frame = self.bounds
+        self.adjustsScrollViewInsets()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -42,19 +58,35 @@ public class Container : UIView{
     ///不会遮住bar
     override public func addSubview(_ view: UIView) {
         self.originView?.addSubview(view)
-        /*
-        if let scroll = view as? UIScrollView,let first = self.originView?.subviews.first,first == scroll{
-            if #available(iOS 11.0, *) {
-                scroll.contentInsetAdjustmentBehavior = .never
+    }
+    
+    /// 适配UIScrollView contentInset
+    fileprivate func adjustsScrollViewInsets(){
+        guard let originView = self.originView,!self.navBarView.isHidden else{return}
+        
+        self.scrollViews = [UIScrollView]()
+        self.viewHierarchy(view: originView)
+        for scroll in scrollViews{
+            if #available(iOS 11.0, *){
+                if scroll.contentInsetAdjustmentBehavior == .never{continue}
+            }else{
+                if let vc = self.viewController,!vc.automaticallyAdjustsScrollViewInsets{continue}
             }
-            if self.navBarView.transparency == 0 {return}
+            if scroll.frame.origin.y >= safeTopHeight + 44{continue}
             var insetTom = scroll.contentInset
-            insetTom.top = insetTom.top + UIApplication.shared.statusBarFrame.height + 44
+            insetTom.top = 44 - scroll.frame.origin.y
             scroll.contentInset = insetTom
-            
-            var point = scroll.contentOffset
-            point.y = point.y - (UIApplication.shared.statusBarFrame.height + 44)
-            scroll.contentOffset = point
-        }*/
+        }
+    }
+    
+    fileprivate func viewHierarchy(view : UIView){
+        if let scroll = view as? UIScrollView{
+            scrollViews.append(scroll)
+        }else{
+            for v in view.subviews{
+                self.viewHierarchy(view: v)
+            }
+        }
+        
     }
 }

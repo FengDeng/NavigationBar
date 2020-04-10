@@ -27,8 +27,15 @@ class ViewController4: UIViewController {
         self.view.addSubview(tableView)
         tableView.frame = self.view.bounds
         
+        if #available(iOS 11.0, *) {
+            tableView.contentInsetAdjustmentBehavior = .never
+        } else {
+            // Fallback on earlier versions
+        }
+        
         self.nb.navigationBar.titleAttribute[.foregroundColor] = UIColor.red
         self.nb.navigationBar.itemAttribute[.foregroundColor] = UIColor.red
+        self.nb.navigationBar.transparency = 0
         
         self.title = "滚动透明度"
         self.nb.navigationBar.backgroundColor = UIColor.black
@@ -57,15 +64,15 @@ extension ViewController4 : UITableViewDataSource{
 extension ViewController4 : UITableViewDelegate{
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         print(scrollView.contentOffset.y)
-        if scrollView.contentOffset.y <= -88{
+        if scrollView.contentOffset.y <= 0{
             self.nb.navigationBar.transparency = 0
             return
         }
-        if scrollView.contentOffset.y >= 0{
+        if scrollView.contentOffset.y >= 88{
             self.nb.navigationBar.transparency = 1
             return
         }
-        self.nb.navigationBar.transparency = (88 + scrollView.contentOffset.y) / 88
+        self.nb.navigationBar.transparency = (scrollView.contentOffset.y) / 88
     }
 }
 

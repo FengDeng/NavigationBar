@@ -16,6 +16,7 @@ class ViewController: UIViewController {
     
     lazy var tableView : UITableView = {
         let t = UITableView()
+        t.backgroundColor = UIColor.lightGray
         t.dataSource = self
         t.delegate = self
         t.rowHeight = 40
@@ -26,14 +27,21 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.view.backgroundColor = UIColor.white
-        self.view.addSubview(tableView)
-        tableView.frame = self.view.bounds
+        
+        let v = UITableView()
+        v.frame = self.view.bounds
+        self.view.addSubview(v)
+        
+        v.addSubview(tableView)
+        tableView.frame = self.view.bounds//
         
         self.title = "我是第一个vc"
         self.nb.navigationBar.backgroundColor = UIColor.blue
     }
 
-
+    override var prefersStatusBarHidden: Bool{
+        return true
+    }
 }
 
 extension ViewController : UITableViewDataSource{

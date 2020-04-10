@@ -272,7 +272,7 @@ public class NavigationBar : UIView{
         container.backgroundColor = UIColor.clear
         super.addSubview(container)
         container.translatesAutoresizingMaskIntoConstraints = false
-        container.topAnchor.constraint(equalTo: super.topAnchor, constant: UIApplication.shared.statusBarFrame.height).isActive = true
+        container.topAnchor.constraint(equalTo: super.topAnchor, constant: safeTopHeight).isActive = true
         container.bottomAnchor.constraint(equalTo: super.bottomAnchor).isActive = true
         container.leftAnchor.constraint(equalTo: super.leftAnchor).isActive = true
         container.rightAnchor.constraint(equalTo: super.rightAnchor).isActive = true
@@ -292,18 +292,16 @@ public class NavigationBar : UIView{
         leftStackView.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(leftStackView)
         leftStackView.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
-        leftStackView.topAnchor.constraint(equalTo: self.container.topAnchor)
-        leftStackView.bottomAnchor.constraint(equalTo: self.container.bottomAnchor)
+        leftStackView.topAnchor.constraint(equalTo: self.container.topAnchor).isActive = true
+        leftStackView.bottomAnchor.constraint(equalTo: self.container.bottomAnchor).isActive = true
         leftStackView.leftAnchor.constraint(equalTo: self.container.leftAnchor, constant: leftViewSpace).isActive = true
-        //leftStackView.widthAnchor.constraint(equalToConstant: 200)
         
         rightStackView.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(rightStackView)
         rightStackView.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
-        rightStackView.topAnchor.constraint(equalTo: self.container.topAnchor)
-        rightStackView.bottomAnchor.constraint(equalTo: self.container.bottomAnchor)
+        rightStackView.topAnchor.constraint(equalTo: self.container.topAnchor).isActive = true
+        rightStackView.bottomAnchor.constraint(equalTo: self.container.bottomAnchor).isActive = true
         rightStackView.rightAnchor.constraint(equalTo: self.container.rightAnchor, constant: -rightViewSpace).isActive = true
-        //rightStackView.widthAnchor.constraint(equalToConstant: 200)
     }
     
     required init?(coder aDecoder: NSCoder) {

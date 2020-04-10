@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         let vc = ViewController()
         vc.title = "ggggg"
-        let nav = UINavigationController.init(rootViewController: vc)
+        let nav = TempNavigationController.init(rootViewController: vc)
         
         //全屏返回手势
         let target = nav.interactivePopGestureRecognizer?.delegate

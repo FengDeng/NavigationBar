@@ -123,7 +123,7 @@ extension UIViewController{
             let v = UIView()
             v.backgroundColor = UIColor.clear
             v.widthAnchor.constraint(equalToConstant: item.width).isActive = true
-            v.heightAnchor.constraint(equalToConstant: 0.1)
+            v.heightAnchor.constraint(equalToConstant: 0.1).isActive = true
             return v
         }
         
@@ -204,18 +204,16 @@ extension UIViewController{
         if let nav = self.navigationController,nav._navigationBarEnable{
             let originView = self.view ?? UIView()
             let bound = self.view.bounds
-            let container = Container.init(bar: self.bk_NavigationBar, originView: originView,frame:bound)
-            self.automaticallyAdjustsScrollViewInsets = false
+            let container = Container.init(bar: self.bk_NavigationBar, originView: originView,frame:bound,viewController:self)
             self.view = container
         }
     }
     @objc func swizzled_viewDidLoad(){
+        self.swizzled_viewDidLoad()
         if let nav = self.navigationController,nav._navigationBarEnable{
             self.initNavigationItem()
             self.observeNavigationItem()
-        }
-        
-        self.swizzled_viewDidLoad()
+        }  
     }
     @objc func swizzled_viewWillAppear(_ animated:Bool){
         self.swizzled_viewWillAppear(animated)

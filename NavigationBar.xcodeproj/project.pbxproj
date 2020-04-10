@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9F0243032440CDC50068EFDF /* TempNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F0243022440CDC50068EFDF /* TempNavigationController.swift */; };
 		9F6A8F1F223B41D700A64908 /* UIViewController+NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6A8F19223B41D600A64908 /* UIViewController+NavigationBar.swift */; };
 		9F6A8F20223B41D700A64908 /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6A8F1A223B41D600A64908 /* NavigationBar.swift */; };
 		9F6A8F21223B41D700A64908 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F6A8F1B223B41D600A64908 /* Container.swift */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9F0243022440CDC50068EFDF /* TempNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempNavigationController.swift; sourceTree = "<group>"; };
 		9F6A8F19223B41D600A64908 /* UIViewController+NavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+NavigationBar.swift"; sourceTree = "<group>"; };
 		9F6A8F1A223B41D600A64908 /* NavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationBar.swift; sourceTree = "<group>"; };
 		9F6A8F1B223B41D600A64908 /* Container.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 				9F8EDE0622325D6A0068F724 /* Assets.xcassets */,
 				9F8EDE0822325D6A0068F724 /* LaunchScreen.storyboard */,
 				9F8EDE0B22325D6A0068F724 /* Info.plist */,
+				9F0243022440CDC50068EFDF /* TempNavigationController.swift */,
 			);
 			path = NavigationBar;
 			sourceTree = "<group>";
@@ -174,6 +177,7 @@
 				9F8EDE21223260690068F724 /* ViewController3.swift in Sources */,
 				9F8EDE23223265140068F724 /* ViewController4.swift in Sources */,
 				9F8EDE1F22325F5B0068F724 /* ViewController2.swift in Sources */,
+				9F0243032440CDC50068EFDF /* TempNavigationController.swift in Sources */,
 				9F6A8F23223B41D700A64908 /* NB.swift in Sources */,
 				9F8EDE0222325D690068F724 /* ViewController.swift in Sources */,
 				9F6A8F20223B41D700A64908 /* NavigationBar.swift in Sources */,
