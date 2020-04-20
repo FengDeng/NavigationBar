@@ -27,10 +27,10 @@ public class NavigationBarAppearance{
     public var itemAttribute : [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 14),NSAttributedString.Key.foregroundColor:UIColor.black]
     
     /// 左边的items离左边的距离
-    public var leftViewSpace : CGFloat = 10
-    public var leftViewsSpace : CGFloat = 5
-    public var rightViewSpace : CGFloat = 10
-    public var rightViewsSpace : CGFloat = 5
+    public var leftViewSpace : CGFloat = 12
+    public var leftViewsSpace : CGFloat = 8
+    public var rightViewSpace : CGFloat = 12
+    public var rightViewsSpace : CGFloat = 8
     
     public var backgroundColor = UIColor.white
     public var backgroundImage : UIImage?
@@ -96,11 +96,11 @@ public class NavigationBar : UIView{
     private lazy var leftStackView : UIStackView = {
         let s = UIStackView()
         s.axis = NSLayoutConstraint.Axis.horizontal
-        s.alignment = UIStackView.Alignment.center
+        s.alignment = UIStackView.Alignment.fill
         s.spacing = self.leftViewsSpace
         s.distribution = .equalSpacing
-        s.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        s.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: NSLayoutConstraint.Axis.horizontal)
+//        s.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+//        s.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: NSLayoutConstraint.Axis.horizontal)
         return s
     }()
     public var leftView : UIView?{
@@ -129,7 +129,7 @@ public class NavigationBar : UIView{
     private lazy var rightStackView : UIStackView = {
         let s = UIStackView()
         s.axis = NSLayoutConstraint.Axis.horizontal
-        s.alignment = UIStackView.Alignment.center
+        s.alignment = UIStackView.Alignment.fill
         s.spacing = self.rightViewsSpace
         s.distribution = .fillProportionally
         //s.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
@@ -334,8 +334,7 @@ extension UIView{
             self.widthAnchor.constraint(equalToConstant: self.bounds.width).isActive = true
             self.heightAnchor.constraint(equalToConstant: self.bounds.height).isActive = true
         }else{
-            self.widthAnchor.constraint(equalToConstant: 40).isActive = true
-            self.heightAnchor.constraint(equalToConstant: 40).isActive = true
+            self.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
         }
     }
 }

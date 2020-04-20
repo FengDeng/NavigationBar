@@ -38,8 +38,8 @@ class ViewController: UIViewController {
         self.title = "我是第一个vc我是第一个vc我是第一个vc我是第一个vc"
         self.nb.navigationBar.backgroundColor = UIColor.white
         
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem.init(title: "返回", style: UIBarButtonItem.Style.done, target: self, action: nil)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "点击", style: UIBarButtonItem.Style.done, target: self, action: nil)
+        self.navigationItem.leftBarButtonItems = [UIBarButtonItem.init(title: "返回", style: UIBarButtonItem.Style.done, target: self, action: nil),UIBarButtonItem.init(title: "测试222", style: UIBarButtonItem.Style.done, target: self, action: nil)]
+        self.navigationItem.rightBarButtonItems = [UIBarButtonItem.init(title: "点击", style: UIBarButtonItem.Style.done, target: self, action: nil),UIBarButtonItem.init(image: UIImage.init(named: "hf_back_black"), style: .done, target: self, action: nil)]
     }
 
     override var prefersStatusBarHidden: Bool{
