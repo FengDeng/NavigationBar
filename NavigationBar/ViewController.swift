@@ -12,7 +12,7 @@ class ViewController: UIViewController {
     
     let bgColors = [UIColor.white,UIColor.red,UIColor.blue,UIColor.green,UIColor.yellow]
     
-    let datas = ["改变背景色","隐藏或者显示","背景透明按钮标题不透明","跳转到无navigationBar的vc","滚动修改透明度"]
+    let datas = ["改变背景色","隐藏或者显示","背景透明按钮标题不透明ff","跳转到无navigationBar的vc","滚动修改透明度"]
     
     lazy var tableView : UITableView = {
         let t = UITableView()
@@ -28,15 +28,18 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         self.view.backgroundColor = UIColor.white
         
-        let v = UITableView()
+        let v = UIView()
         v.frame = self.view.bounds
         self.view.addSubview(v)
         
         v.addSubview(tableView)
         tableView.frame = self.view.bounds//
         
-        self.title = "我是第一个vc"
-        self.nb.navigationBar.backgroundColor = UIColor.blue
+        self.title = "我是第一个vc我是第一个vc我是第一个vc我是第一个vc"
+        self.nb.navigationBar.backgroundColor = UIColor.white
+        
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem.init(title: "返回", style: UIBarButtonItem.Style.done, target: self, action: nil)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "点击", style: UIBarButtonItem.Style.done, target: self, action: nil)
     }
 
     override var prefersStatusBarHidden: Bool{

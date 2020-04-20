@@ -80,6 +80,7 @@ public class Container : UIView{
     }
     
     fileprivate func viewHierarchy(view : UIView){
+        if view.isKind(of: UIControl.self){return}
         if let scroll = view as? UIScrollView{
             scrollViews.append(scroll)
         }else{

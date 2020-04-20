@@ -23,14 +23,16 @@ public class NavigationBarAppearance{
     public static let appearance = NavigationBarAppearance()
     private init(){}
     
-    public var backgroundColor = UIColor.white
     public var titleAttribute : [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 20),NSAttributedString.Key.foregroundColor:UIColor.black]
     public var itemAttribute : [NSAttributedString.Key : Any] = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: 14),NSAttributedString.Key.foregroundColor:UIColor.black]
+    
+    /// 左边的items离左边的距离
     public var leftViewSpace : CGFloat = 10
     public var leftViewsSpace : CGFloat = 5
     public var rightViewSpace : CGFloat = 10
     public var rightViewsSpace : CGFloat = 5
     
+    public var backgroundColor = UIColor.white
     public var backgroundImage : UIImage?
     public var shadowColor : UIColor?
     public var shadowImage : UIImage?
@@ -97,6 +99,7 @@ public class NavigationBar : UIView{
         s.alignment = UIStackView.Alignment.center
         s.spacing = self.leftViewsSpace
         s.distribution = .equalSpacing
+        s.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         s.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: NSLayoutConstraint.Axis.horizontal)
         return s
     }()
@@ -128,8 +131,9 @@ public class NavigationBar : UIView{
         s.axis = NSLayoutConstraint.Axis.horizontal
         s.alignment = UIStackView.Alignment.center
         s.spacing = self.rightViewsSpace
-        s.distribution = .equalSpacing
-        s.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: NSLayoutConstraint.Axis.horizontal)
+        s.distribution = .fillProportionally
+        //s.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        //s.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: NSLayoutConstraint.Axis.horizontal)
         return s
     }()
     public var rightView : UIView?{
@@ -284,20 +288,24 @@ public class NavigationBar : UIView{
             self._titleView.font = font
         }
         self.titleView = _titleView
-        _titleView.translatesAutoresizingMaskIntoConstraints = false
+        
         container.addSubview(_titleView)
+        container.addSubview(rightStackView)
+        container.addSubview(leftStackView)
+        
+        _titleView.translatesAutoresizingMaskIntoConstraints = false
+        _titleView.leftAnchor.constraint(greaterThanOrEqualTo: leftStackView.rightAnchor, constant: 10).isActive = true
+        _titleView.rightAnchor.constraint(lessThanOrEqualTo: rightStackView.leftAnchor).isActive = true
         _titleView.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
         _titleView.centerXAnchor.constraint(equalTo: container.centerXAnchor).isActive = true
         
         leftStackView.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(leftStackView)
         leftStackView.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
         leftStackView.topAnchor.constraint(equalTo: self.container.topAnchor).isActive = true
         leftStackView.bottomAnchor.constraint(equalTo: self.container.bottomAnchor).isActive = true
         leftStackView.leftAnchor.constraint(equalTo: self.container.leftAnchor, constant: leftViewSpace).isActive = true
         
         rightStackView.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(rightStackView)
         rightStackView.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
         rightStackView.topAnchor.constraint(equalTo: self.container.topAnchor).isActive = true
         rightStackView.bottomAnchor.constraint(equalTo: self.container.bottomAnchor).isActive = true
@@ -325,6 +333,9 @@ extension UIView{
         if self.bounds.width > 0 && self.bounds.height > 0{
             self.widthAnchor.constraint(equalToConstant: self.bounds.width).isActive = true
             self.heightAnchor.constraint(equalToConstant: self.bounds.height).isActive = true
+        }else{
+            self.widthAnchor.constraint(equalToConstant: 40).isActive = true
+            self.heightAnchor.constraint(equalToConstant: 40).isActive = true
         }
     }
 }

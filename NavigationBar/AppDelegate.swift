@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         nav.interactivePopGestureRecognizer?.isEnabled = false
         
         
-        nav.nb.navigationBarEnable = true
+        //nav.nb.navigationBarEnable = true
         self.window?.rootViewController = nav
         return true
     }
